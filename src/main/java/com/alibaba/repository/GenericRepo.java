@@ -12,6 +12,5 @@ public interface GenericRepo<E,ID> extends JpaRepository<E,ID>,PagingAndSortingR
 
     List<E> findAll();
     Optional<E> findById(ID id);
-    boolean exist(ID id);
 
 }
