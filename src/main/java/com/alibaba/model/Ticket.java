@@ -1,11 +1,11 @@
 package com.alibaba.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -14,14 +14,15 @@ import java.util.Date;
 public class Ticket extends BaseEntity {
 
     @OneToOne
+    @NotNull
     private User user;
-    private Double distance;
-    private Integer tripTime;
-    @ManyToOne
-    private Bus bus;
-    private Date departAt;
-    private Date arriveAt;
-    private Integer price;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trip_Id")
+    @NotNull
+    private Trip trip;
+    @JsonIgnore
+    private Integer sitNumber;
+    @JsonIgnore
+    private boolean expired;
 
 }

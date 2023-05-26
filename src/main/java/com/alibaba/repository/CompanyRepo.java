@@ -18,4 +18,5 @@ public interface CompanyRepo extends GenericRepo<Company,Long>{
     @Query(value = "SELECT b FROM Bus b INNER JOIN Company c WHERE c.name =:name")
     List<Bus> findBusesByCompanyName(@Param("name") String name);
 
+
 }
