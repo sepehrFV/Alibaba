@@ -17,7 +17,7 @@ public class Bus extends BaseEntity {
     private Integer sits;
     private Integer availableSitCount;
     @ManyToOne
-    @JoinColumn(name ="companyId")
+    @JoinColumn(name ="company_Id")
     private Company company;
     @ManyToOne
     private DesCity desCity;

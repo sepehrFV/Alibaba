@@ -18,9 +18,6 @@ public class Company extends BaseEntity {
     private String name;
     @Embedded
     private LocationPoint originCityLocation;
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "company")
-    private List<Bus> buses;
     private String originCityName;
 
 
