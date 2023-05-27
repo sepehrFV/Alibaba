@@ -1,11 +1,8 @@
 package com.alibaba.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -14,8 +11,8 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 public class Bus extends BaseEntity {
 
-    private Integer sits;
-    @ManyToOne(fetch = FetchType.EAGER)
+    private Integer seats;
+    @ManyToOne
     @JoinColumn(name ="company_Id")
     private Company company;
 

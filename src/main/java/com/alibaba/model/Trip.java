@@ -1,7 +1,6 @@
 package com.alibaba.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,8 @@ public class Trip extends BaseEntity {
     @JoinColumn(name = "descity_Id")
     private DesCity desCity;
     @OneToMany
-    private List<Sit> filledSits;
+    @JsonIgnore
+    private List<Seat> filledSeats;
     @JsonIgnore
     private Integer leftCapacity;
     @NotNull
@@ -34,7 +34,8 @@ public class Trip extends BaseEntity {
     private Integer tripTime;
     @JsonIgnore
     private Double price;
-
+    @JsonIgnore
+    //@Value("false")
     private boolean isExpired;
 
 

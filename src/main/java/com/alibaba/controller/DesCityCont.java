@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/descity")
 public class DesCityCont {
@@ -23,7 +25,7 @@ public class DesCityCont {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody DesCity desCity){
+    public ResponseEntity<String> create(@RequestBody @Valid DesCity desCity){
         try{
             serv.save(desCity);
             return ResponseEntity.ok("creation successful");

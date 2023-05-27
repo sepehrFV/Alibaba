@@ -2,6 +2,7 @@ package com.alibaba.model;
 
 
 import com.alibaba.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,22 +26,10 @@ public class User extends BaseEntity {
     @NotNull
     private Gender gender;
     @NotNull
-    @Transient
     private String dob;
+    @JsonIgnore
     private Integer age;
     private String nationalCode;
-
-    public Integer calculateAge(String dob){
-        String[] date = new String[2];
-        date = dob.split("/");
-        int year = Integer.parseInt(date[0]);
-        int month = Integer.parseInt(date[1]);
-        int day = Integer.parseInt(date[2]);
-        LocalDate dateOfBirth = LocalDate.of(year,month,day);
-        int age = Period.between(dateOfBirth,LocalDate.now()).getYears();
-        return age;
-
-    }
 
 
 }

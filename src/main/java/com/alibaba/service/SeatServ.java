@@ -1,13 +1,13 @@
 package com.alibaba.service;
 
-import com.alibaba.model.Sit;
+import com.alibaba.model.Seat;
 import com.alibaba.repository.GenericRepo;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SitServ extends GenericServiceImp<Sit,Long> implements ISitServ{
+public class SeatServ extends GenericServiceImp<Seat,Long> implements ISeatServ {
     @Override
-    protected GenericRepo<Sit, Long> getRepo() {
+    protected GenericRepo<Seat, Long> getRepo() {
         return null;
     }
 }

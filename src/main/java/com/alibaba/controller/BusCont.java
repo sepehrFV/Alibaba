@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/bus")
@@ -22,7 +24,7 @@ public class BusCont {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody Bus bus){
+    public ResponseEntity<String> create(@RequestBody @Valid Bus bus){
         try{
             serv.save(bus);
             return ResponseEntity.ok("creation successful");

@@ -25,18 +25,20 @@ import java.util.Objects;
 @EqualsAndHashCode
 public abstract class BaseEntity {
 
-    @Id
-    private Long id;
     @LastModifiedDate
     private Date lastModifiedDate;
     @LastModifiedBy
     private String modifiedBy;
     @CreatedBy
+    @JsonIgnore
     private String createdBy;
     @CreatedDate
     private Date createdDate;
     @Version
     private Integer version;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
 
 }

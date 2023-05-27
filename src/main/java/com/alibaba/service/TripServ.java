@@ -40,7 +40,7 @@ public class TripServ extends GenericServiceImp<Trip, Long> implements ITripServ
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                 + Math.cos(Math.toRadians(destinationTown.getLatitude())) * Math.cos(originTown.getLatitude())
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.abs(1 - a)));
         return r * c;//km
 
     }
@@ -83,7 +83,7 @@ public class TripServ extends GenericServiceImp<Trip, Long> implements ITripServ
             trip.setTripTime(calculateTripTime(trip.getDistance()));
             trip.setArriveAt(calculateArriveTime(trip.getTripTime(), trip.getDepartAt()));
             trip.setPrice(calculatePrice(trip.getDistance()));
-            trip.setLeftCapacity(bus.get().getSits());
+            trip.setLeftCapacity(bus.get().getSeats());
         }
         repo.save(trip);
 
