@@ -1,9 +1,10 @@
 package com.alibaba.repository;
 
-import com.alibaba.model.Seat;
+import com.alibaba.model.Vehicle;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SeatRepo extends GenericRepo<Seat,Long> {
+public interface VehicleRepo extends GenericRepo<Vehicle,Long>{
+
 
 }

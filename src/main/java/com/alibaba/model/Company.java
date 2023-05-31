@@ -1,11 +1,12 @@
 package com.alibaba.model;
 
 
-import com.alibaba.embeddable.LocationPoint;
+import com.alibaba.enums.DesCity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -13,9 +14,8 @@ import javax.persistence.*;
 public class Company extends BaseEntity {
 
     private String name;
-    @Embedded
-    private LocationPoint originCityLocation;
-    private String originCityName;
-
+    private Date foundation;
+    @Enumerated
+    private DesCity originCity;
 
 }

@@ -1,5 +1,7 @@
 package com.alibaba.model;
 
+import com.alibaba.embeddable.Seat;
+import com.alibaba.enums.DesCity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,16 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 public class Trip extends BaseEntity {
 
-    @OneToOne
-    private Bus bus;
-    @ManyToOne
-    @JoinColumn(name = "descity_Id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private Vehicle vehicle;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "seat",joinColumns = @JoinColumn(name = "trip_id"))
+    @JsonIgnore
+    private List<Seat> seatList;
+    @Enumerated
     private DesCity desCity;
-    @OneToMany
-    @JsonIgnore
-    private List<Seat> filledSeats;
-    @JsonIgnore
-    private Integer leftCapacity;
     @NotNull
     private Date departAt;
     @JsonIgnore

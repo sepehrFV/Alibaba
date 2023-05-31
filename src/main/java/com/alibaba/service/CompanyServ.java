@@ -1,7 +1,7 @@
 package com.alibaba.service;
 
-import com.alibaba.model.Bus;
 import com.alibaba.model.Company;
+import com.alibaba.model.Vehicle;
 import com.alibaba.repository.CompanyRepo;
 import com.alibaba.repository.GenericRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,11 @@ public class CompanyServ extends GenericServiceImp<Company,Long> implements ICom
         return this.repo;
     }
 
+    @Override
+    protected Class<?> getExtendedClass() {
+        return this.getClass();
+    }
+
 
     @Override
     public Company findByName(String name) {
@@ -32,13 +37,13 @@ public class CompanyServ extends GenericServiceImp<Company,Long> implements ICom
     }
 
     @Override
-    public List<Bus> findBusesByCompanyId(Long id) {
-        return repo.findBusesByCompanyId(id);
+    public List<Vehicle> findVehiclesByCompanyId(Long id) {
+        return repo.findVehiclesByCompanyId(id);
     }
 
     @Override
-    public List<Bus> findBusesByCompanyName(String name) {
-        return repo.findBusesByCompanyName(name);
+    public List<Vehicle> findVehiclesByCompanyName(String name) {
+        return repo.findVehiclesByCompanyName(name);
     }
 
 

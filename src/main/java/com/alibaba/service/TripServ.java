@@ -1,29 +1,28 @@
 package com.alibaba.service;
 
 
-import com.alibaba.embeddable.LocationPoint;
-import com.alibaba.model.Bus;
+import com.alibaba.enums.DesCity;
 import com.alibaba.model.Trip;
-import com.alibaba.repository.BusRepo;
+import com.alibaba.model.Vehicle;
 import com.alibaba.repository.GenericRepo;
 import com.alibaba.repository.TripRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class TripServ extends GenericServiceImp<Trip, Long> implements ITripServ {
 
     private final TripRepo repo;
-    private final BusRepo busRepo;
+    private final IVehicleServ vehicleServ;
 
     @Autowired
-    public TripServ(TripRepo repo, BusRepo busRepo) {
+    public TripServ(TripRepo repo, IVehicleServ vehicleServ) {
         this.repo = repo;
-        this.busRepo = busRepo;
+        this.vehicleServ = vehicleServ;
     }
 
 
@@ -33,23 +32,35 @@ public class TripServ extends GenericServiceImp<Trip, Long> implements ITripServ
     }
 
     @Override
-    public Double calculateDistance(LocationPoint originTown, LocationPoint destinationTown) {
-        final int r = 6371;//radius of earth
-        double latDistance = Math.toRadians(originTown.getLatitude() - destinationTown.getLatitude());
-        double lonDistance = Math.toRadians(originTown.getLongitude() - destinationTown.getLongitude());
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(destinationTown.getLatitude())) * Math.cos(originTown.getLatitude())
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.abs(1 - a)));
-        return r * c;//km
+    protected Class<?> getExtendedClass() {
+        return this.getClass();
+    }
+
+    @Override
+    public Double calculateDistance(DesCity originTown, DesCity destinationTown) {
+        logger.debug("enter trip calculateDistance()");
+        Double distance = null;
+        try {
+            final int r = 6371;//radius of earth
+            double latDistance = Math.toRadians(originTown.latitude - destinationTown.latitude);
+            double lonDistance = Math.toRadians(originTown.longitude - destinationTown.longitude);
+            double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                    + Math.cos(Math.toRadians(destinationTown.latitude)) * Math.cos(destinationTown.latitude)
+                    * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+            double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.abs(1 - a)));
+            distance = r * c;//km
+        }catch (ArithmeticException ex){
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+        }
+        return distance;
 
     }
 
 
     @Override
-    public Integer calculateTripTime(Double distance) {
-        final Integer averageSpeed = 70;
-        return (Integer) (int) (distance / 70);
+    public Integer calculateTripTime(Double distance,Integer averageSpeed) {
+        return (Integer) (int) (distance / averageSpeed);
     }
 
     @Override
@@ -61,14 +72,15 @@ public class TripServ extends GenericServiceImp<Trip, Long> implements ITripServ
     }
 
     @Override
-    public Double calculatePrice(Double distance) {
-        Double pricePerEachKm = 0.3;
-        return (distance * pricePerEachKm);
+    public Double calculatePrice(Double distance,Double priceRatio) {
+        final Double pricePerEachKm = 0.3;
+        Double specificVehicleTypePrice = pricePerEachKm * priceRatio;
+        return (distance * specificVehicleTypePrice);
     }
 
     @Override
     public void expiredCheck(Date departTime) {
-        repo.findAll().stream().forEach(t -> {
+        repo.findAll().forEach(t -> {
             Date currentDate = new Date();
             if (currentDate.after(t.getDepartAt())) t.setExpired(true);
         });
@@ -77,15 +89,21 @@ public class TripServ extends GenericServiceImp<Trip, Long> implements ITripServ
 
     @Override
     public void save(Trip trip) {
-        Optional<Bus> bus = busRepo.findById(trip.getBus().getId());
-        if (bus.isPresent()) {
-            trip.setDistance(calculateDistance(bus.get().getCompany().getOriginCityLocation(), trip.getDesCity().getLocation()));
-            trip.setTripTime(calculateTripTime(trip.getDistance()));
-            trip.setArriveAt(calculateArriveTime(trip.getTripTime(), trip.getDepartAt()));
-            trip.setPrice(calculatePrice(trip.getDistance()));
-            trip.setLeftCapacity(bus.get().getSeats());
+
+        logger.debug("enter trip's save()...");
+        Vehicle vehicle = vehicleServ.findById(trip.getVehicle().getId());
+        trip.setDistance(calculateDistance(vehicle.getCompany().getOriginCity(),trip.getDesCity()));
+        trip.setTripTime(calculateTripTime(trip.getDistance(),vehicle.getType().averageSpeed));
+        trip.setArriveAt(calculateArriveTime(trip.getTripTime(), trip.getDepartAt()));
+        trip.setPrice(calculatePrice(trip.getDistance(),vehicle.getType().priceRatio));
+        try{
+            repo.save(trip);
+            logger.info("trip "+trip.toString()+" successfully saved.");
+        }catch (DataAccessException ex){
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
         }
-        repo.save(trip);
+
 
     }
 

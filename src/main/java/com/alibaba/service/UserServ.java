@@ -4,6 +4,7 @@ import com.alibaba.model.User;
 import com.alibaba.repository.GenericRepo;
 import com.alibaba.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,7 +26,13 @@ public class UserServ extends GenericServiceImp<User,Long> implements IUserServ{
     }
 
     @Override
+    protected Class<?> getExtendedClass() {
+        return this.getClass();
+    }
+
+    @Override
     public Integer calculateAge(String dob){
+
         String[] date = new String[2];
         date = dob.split("/");
         int year = Integer.parseInt(date[0]);
@@ -39,7 +46,16 @@ public class UserServ extends GenericServiceImp<User,Long> implements IUserServ{
 
     @Override
     public void save(User user){
-        user.setAge(calculateAge(user.getDob()));
-        repo.save(user);
+        logger.debug("enter user's save()...");
+        Integer age = calculateAge(user.getDob());
+        if(age>=18)
+        user.setAge(age);
+        try{
+            repo.save(user);
+            logger.info("user "+user.toString()+" successfully saved.");
+        }catch (DataAccessException ex){
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 }
